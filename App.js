@@ -1,43 +1,30 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Svg } from 'expo';
+import Slider from 'react-native-slider';
+import Smiley from './Components/Smiley';
 
 export default class App extends React.Component {
+  state = {
+    value: 0,
+  };
+  changeValue(value) {
+    this.setState({
+      value,
+    });
+  }
   render() {
     return (
       <View style={styles.container}>
-        <Svg height={300} width={300}>
-          <Svg.Circle
-            cx={150}
-            cy={150}
-            r={145}
-            strokeWidth={2.5}
-            stroke="#e74c3c"
-            fill="#f1c40f"
-          />
-          <Svg.Circle
-            cx={100}
-            cy={130}
-            r={15}
-            strokeWidth={2.5}
-            stroke="#e74c3c"
-            fill="#e74c3c"
-          />
-          <Svg.Circle
-            cx={200}
-            cy={130}
-            r={15}
-            strokeWidth={2.5}
-            stroke="#e74c3c"
-            fill="#e74c3c"
-          />
-          <Svg.Path
-            d="M80,200 C 80 280, 220 280, 220,200"
-            fill="#f1c40f"
-            stroke="#e74c3c"
-            strokeWidth={2.5}
-          />
-        </Svg>
+        <Text>{this.state.value}</Text>
+        <Slider
+          style={styles.slider}
+          maximumValue={100}
+          minimumValue={-100}
+          step={5}
+          value={0}
+          onValueChange={value => this.changeValue(value)}
+        />;
+        <Smiley value={this.state.value} />
       </View>
     );
   }
@@ -49,5 +36,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  slider: {
+    width: 200,
+    height: 10,
   },
 });
