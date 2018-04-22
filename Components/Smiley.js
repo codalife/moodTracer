@@ -9,14 +9,13 @@ export default class Smiley extends React.Component {
   state = { adjustment: 220, besierAdjustment: 220 };
   componentWillReceiveProps() {
     this.setState({
-      adjustment: 220 + this.props.value / 100 * 20,
-      besierAdjustment: 220 - this.props.value / 100 * 20,
+      adjustment: 220 - this.props.value / 100 * 20,
+      besierAdjustment: 220 + this.props.value / 100 * 20,
     });
   }
   render() {
     return (
       <Svg height={300} width={300}>
-        <Text>{this.state.adjustment}</Text>
         <Svg.Circle
           cx={150}
           cy={150}
