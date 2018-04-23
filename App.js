@@ -5,6 +5,7 @@ import { StackNavigator } from 'react-navigation';
 import Slider from 'react-native-slider';
 import Smiley from './Components/Smiley';
 import Dashboard from './Components/MoodList';
+import notification from './Notifications/notification';
 
 const db = SQLite.openDatabase('tracer.db');
 
@@ -23,6 +24,7 @@ class App extends React.Component {
         // `delete from moods`,
       );
     });
+    notification();
   }
 
   changeMood(value) {
