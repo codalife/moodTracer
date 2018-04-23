@@ -59,4 +59,3 @@ export default class Smiley extends React.Component {
     );
   }
 }
-// "M80,220 C 80 220, 220 220, 220,220"

@@ -1,14 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { SQLite } from 'expo';
-import { createStackNavigator } from 'react-navigation';
+import { StackNavigator } from 'react-navigation';
 import Slider from 'react-native-slider';
 import Smiley from './Components/Smiley';
-// import Dashboard from './Components/Dashboard';
+import Dashboard from './Components/MoodList';
 
 const db = SQLite.openDatabase('tracer.db');
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor() {
     super();
     this.changeMood = this.changeMood.bind(this);
@@ -37,35 +37,20 @@ export default class App extends React.Component {
       tx.executeSql(
         `insert into moods (timestamp, value) values (?, ?);`,
         [now, value],
-        (error, success) => {
-          // if (error) {
-          //   console.log(error);
-          //   return;
-          // }
-          tx.executeSql(
-            `select * from moods`,
-            [],
-            (err, { rows: { _array } }) => {
-              console.log(_array);
-              self.setState({
-                moods: _array,
-              });
-            },
-          );
-        },
+        (error, success) => self.props.navigation.navigate('Dash'),
       );
     });
   }
 
   render() {
-    const moods = this.state.moods.map((mood, i) => (
-      <Text key={i}> {mood.value}</Text>
-    ));
     return (
       <View style={styles.container}>
         <Smiley style={{ flex: 5 }} value={this.state.value} />
-        <Button onPress={this.submitMood} title="submitMood" />
-        {moods}
+        <Button
+          style={styles.button}
+          onPress={this.submitMood}
+          title="submitMood"
+        />
         <Slider
           style={styles.slider}
           maximumValue={100}
@@ -92,4 +77,21 @@ const styles = StyleSheet.create({
     width: 200,
     height: 10,
   },
+  button: {
+    backgroundColor: 'blue',
+  },
 });
+
+export default StackNavigator(
+  {
+    Home: {
+      screen: App,
+    },
+    Dash: {
+      screen: Dashboard,
+    },
+  },
+  {
+    initialRouteName: 'Home',
+  },
+);
