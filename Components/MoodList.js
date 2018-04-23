@@ -9,6 +9,17 @@ export default class Dashboard extends React.Component {
     moods: [],
   };
 
+  componentDidMount() {
+    const self = this;
+    db.transaction(tx => {
+      tx.executeSql(`select * from moods`, [], (err, { rows: { _array } }) => {
+        self.setState({
+          moods: _array,
+        });
+      });
+    });
+  }
+
   populateFromDB() {
     db.transaction(tx => {
       tx.executeSql(`select * from moods;`, [], (_, { rows: { _array } }) =>
@@ -18,7 +29,9 @@ export default class Dashboard extends React.Component {
   }
 
   render() {
-    const moods = this.state.moods.map(mood => <Text> {mood.value} </Text>);
+    const moods = this.state.moods.map((mood, index) => (
+      <Text key={index}> {mood.value} </Text>
+    ));
     return <View style={styles.container}>{moods}</View>;
   }
 }
