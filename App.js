@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { Alert, StyleSheet, Text, View, Button } from 'react-native';
 import { SQLite } from 'expo';
 import { StackNavigator } from 'react-navigation';
+import { Notifications } from 'expo';
 import Slider from 'react-native-slider';
 import Smiley from './Components/Smiley';
 import Dashboard from './Components/MoodList';
-import notification from './Notifications/notification';
+import setNotification from './Notifications/setNotification';
 
 const db = SQLite.openDatabase('tracer.db');
 
@@ -14,18 +15,27 @@ class App extends React.Component {
     super();
     this.changeMood = this.changeMood.bind(this);
     this.submitMood = this.submitMood.bind(this);
+    this.listenForNotifications = this.listenForNotifications.bind(this);
   }
   state = { value: 0, moods: [100, 100] };
 
   componentDidMount() {
     db.transaction(tx => {
       tx.executeSql(
-        'create table if not exists moods (id integer primary key not null, timestamp int, value int);',
-        // `delete from moods`,
+        // 'create table if not exists moods (id integer primary key not null, timestamp int, value int);',
+        `delete from moods`,
       );
     });
-    notification();
+
+    this.listenForNotifications();
   }
+  listenForNotifications = () => {
+    Notifications.addListener(notification => {
+      if (notification.origin === 'received') {
+        Alert.alert(notification.title, notification.body);
+      }
+    });
+  };
 
   changeMood(value) {
     this.setState({ value });
@@ -39,7 +49,12 @@ class App extends React.Component {
       tx.executeSql(
         `insert into moods (timestamp, value) values (?, ?);`,
         [now, value],
-        (error, success) => self.props.navigation.navigate('Dash'),
+        (error, success) => {
+          // create new notification
+          setNotification();
+          // route to dash
+          self.props.navigation.navigate('Dash');
+        },
       );
     });
   }
